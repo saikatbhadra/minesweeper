@@ -1,4 +1,4 @@
-require_relative 'minesweeper'
+require_relative 'tile'
 
 # Class that holds a 2D array of tiles
 class Board
@@ -9,6 +9,7 @@ class Board
     @num_bombs = num_bombs
     @grid = Array.new(size) { Array.new(size) { Tile.new } } #array of tiles
     add_bombs
+    set_positions
     set_neighbors
   end
 
@@ -16,7 +17,33 @@ class Board
     grid[x][y]
   end
 
+  def inspect
+    inspect_str = ''
+    inspect_str << "**Board Object** \n"
+    inspect_str << "Size of board: #{size}\n"
+    inspect_str << "Num bombs: #{num_bombs}\n"
+    inspect_str << "Board status: \n"
+    grid.size.times do |i|
+      grid.size.times do |j|
+        inspect_str << "#{self[i,j].display_val}\t"
+      end
+      inspect_str << "\n"
+    end
+
+    inspect_str
+  end
+
+
   private
+    def set_positions
+      grid.size.times do |i|
+        grid.size.times do |j|
+          self[i, j].position = [i,j]
+        end
+      end
+    end
+
+
     def add_bombs
       bomb_locations = []
       until bomb_locations.count == num_bombs
@@ -32,16 +59,15 @@ class Board
     def set_neighbors
       size.times do |i|
         size.times do |j|
-            self[i, j].neighbors = get_neighbors([i,j])
-          end
+          self[i, j].neighbors = get_neighbors([i,j])
         end
       end
     end
 
     def get_neighbors(position)
       raise "Invalid position" unless on_board?(position)
-      offsets = [-1,0,1].repeated_permutations(2).to_a.length
-      offsets.delete([0,0])
+      offsets = [-1, 0, 1].repeated_permutation(2).to_a
+      offsets.delete([0, 0])
 
       neighbors = []
       offsets.each do |offset|
@@ -56,7 +82,6 @@ class Board
     end
 
     def add_positions(pos1, pos2)
-      [pos1[0] + pos2[0], pos[1] + pos2[1]]
+      [pos1[0] + pos2[0], pos1[1] + pos2[1]]
     end
-
 end

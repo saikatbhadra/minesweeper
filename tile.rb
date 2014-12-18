@@ -1,13 +1,23 @@
 class Tile
-
-  attr_accessor :neighbors
-  attr_writer :bomb, :flagged, :revealed
+  attr_reader :revealed
+  attr_accessor :neighbors, :bomb, :flagged, :position
 
   def initialize()
     @bomb = false
     @revealed = false
     @flagged = false
+    @position = nil
     @neighbors = []
+  end
+
+  def inspect
+    inspect_hash = {
+      bomb: bomb,
+      flagged: flagged,
+      revealed: revealed,
+      position: position,
+      neighbors: neighbors.map(&:position)
+    }.inspect
   end
 
   def bomb?
