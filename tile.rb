@@ -1,6 +1,6 @@
 class Tile
-  attr_reader :revealed
-  attr_accessor :neighbors, :bomb, :flagged, :position
+  attr_writer :revealed, :flagged
+  attr_accessor :neighbors, :bomb, :position
 
   def initialize()
     @bomb = false
@@ -12,9 +12,9 @@ class Tile
 
   def inspect
     inspect_hash = {
-      bomb: bomb,
-      flagged: flagged,
-      revealed: revealed,
+      bomb: bomb?,
+      flagged: flagged?,
+      revealed: revealed?,
       position: position,
       neighbors: neighbors.map(&:position)
     }.inspect
@@ -29,10 +29,14 @@ class Tile
   end
 
   def reveal
+    if revealed?
+      p self
+      raise "Already revealed!"
+    end
     self.revealed = true
 
     if !bomb? && self.neighbor_bomb_count == 0
-      neighbors.each { |el| el.reveal unless el.flagged? }
+      neighbors.each { |el| el.reveal unless el.flagged? || el.revealed? }
     end
   end
 
@@ -67,53 +71,4 @@ class Tile
     bomb_count
   end
 
-end
-
-#############################################
-# Create basic test functions for Tile class
-#############################################
-if __FILE__  == $PROGRAM_NAME
-  a = Tile.new
-  b = Tile.new
-  c = Tile.new
-  d = Tile.new
-
-  a.bomb = true
-  b.flagged = true
-  c.bomb = true
-
-  # setter/getters
-  p a.bomb?  # => true
-  p b.flagged? # => true
-  p c.revealed? # => false
-
-  a.neighbors = [b,c,d]
-  b.neighbors = [a,c,d]
-  c.neighbors = [b,d]
-
-  # neighbor_bomb_count
-
-  p a.neighbor_bomb_count # => 1
-  p b.neighbor_bomb_count # => 2
-  p c.neighbor_bomb_count # => 0
-  p d.neighbor_bomb_count # => 0
-
-  # display_valu
-  x = Tile.new
-  x.revealed = true
-  x.bomb = true
-  p x.display_val # => 'B'
-
-  b.flagged = false
-  b.revealed = true
-  p b.display_val # => '2'
-
-  d.revealed = true
-  p d.display_val # => '_'
-
-  d.revealed = true
-  p d.display_val # => '_'
-
-  a.revealed = false
-  p a.display_val # => '*'
 end

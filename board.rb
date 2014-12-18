@@ -33,6 +33,9 @@ class Board
     inspect_str
   end
 
+  def on_board?(pos)
+    pos.all? { |x| (0...size) === x }
+  end
 
   private
     def set_positions
@@ -75,10 +78,6 @@ class Board
         neighbors << self[*neighbor_loc] if on_board?(neighbor_loc)
       end
       neighbors
-    end
-
-    def on_board?(pos)
-      pos.all? { |x| (0...size) === x }
     end
 
     def add_positions(pos1, pos2)
