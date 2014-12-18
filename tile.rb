@@ -22,7 +22,7 @@ class Tile
     self.revealed = true
 
     if !bomb? && self.neighbor_bomb_count == 0
-      neighbors.each { |el| el.reveal }
+      neighbors.each { |el| el.reveal unless el.flagged? }
     end
   end
 
